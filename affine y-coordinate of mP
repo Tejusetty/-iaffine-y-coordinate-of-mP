@@ -1,0 +1,97 @@
+def compute_y_padic( 
+    p, A, B, 
+    x0, x1, 
+    y0, y1, 
+    xm0, xm1, 
+    xm1_prev0, xm1_prev1 
+): 
+    p2 = p * p 
+    print("p^2 =", p2) 
+    print("-" * 40) 
+ 
+    # ----- Denominator ----- 
+    denom = 2*y0 + 2*y1*p 
+    print("denom = 2*y0 + 2*y1*p =", denom) 
+ 
+    denom_inv = pow(denom, -1, p2) 
+    print("denom_inv (mod p^2) =", denom_inv) 
+    print("-" * 40) 
+ 
+    # ----- First numerator ----- 
+    num1 = ( 
+        2*B*(p - 1) 
+        + (p - 1) *  
+            (A + xm0*x0) * (xm0 + x0) 
+            + xm1_prev0 * (xm0 + (p - 1)*x0)**2 
+        
+    ) 
+    print("num1 =", num1) 
+ 
+    # ----- Second numerator (× p) ----- 
+    num2 = ( 
+        2*B*(p - 1) 
+        + (p - 1) * ( 
+            (A + xm0*x0) * (xm0 + x0) 
+            + (xm0 + x0) * (xm0*x1 + xm1*x0) 
+            + (A + xm0*x0) * (xm1 + x1) 
+        ) 
+    ) * p 
+    print("num2 (after × p) =", num2) 
+ 
+    # ----- Third numerator (× p) ----- 
+    num3 = ( 
+        2 * xm1_prev0 * (xm0 + (p - 1)*x0) * (xm1 + (p - 1)*( x1 + x0 )) 
+        + xm1_prev1 * (xm0 + (p - 1)*x0)**2 
+    ) * p 
+    print("num3 (after × p) =", num3) 
+    print("-" * 40) 
+ 
+    # ----- Total numerator ----- 
+    numerator = num1 + num2 + num3 
+    print("numerator =", numerator) 
+ 
+    numerator_mod = numerator % p2 
+    print("numerator mod p^2 =", numerator_mod) 
+    print("-" * 40) 
+ 
+    # ----- p-adic division ----- 
+    result = (numerator_mod * denom_inv) % p2 
+    print("result mod p^2 =", result) 
+ 
+    # ----- Split coordinates ----- 
+    y_m0 = result % p 
+    y_m1 = (result - y_m0) // p 
+ 
+    print("split y_m0 =", y_m0) 
+    print("split y_m1 =", y_m1) 
+    print("-" * 40) 
+ 
+    return y_m0, y_m1 
+# ================= USER INPUTS ================= 
+ 
+p = int(input("Enter p: ")) 
+A = int(input("Enter A: ")) 
+B = int(input("Enter B: ")) 
+ 
+x0 = int(input("Enter x0: ")) 
+x1 = int(input("Enter x1: ")) 
+ 
+y0 = int(input("Enter y0: ")) 
+y1 = int(input("Enter y1: ")) 
+ 
+xm0 = int(input("Enter x_m0: ")) 
+xm1 = int(input("Enter x_m1: ")) 
+ 
+xm1_prev0 = int(input("Enter x_(m-1)0: ")) 
+xm1_prev1 = int(input("Enter x_(m-1)1: ")) 
+ 
+# ================= COMPUTE ================= 
+y_mod_p2 = compute_y_padic( 
+p, A, B, 
+x0, x1, 
+y0, y1, 
+xm0, xm1, 
+xm1_prev0, xm1_prev1 
+) 
+print("\nFinal result:") 
+print("y(mP) mod p^2 =", y_mod_p2)
